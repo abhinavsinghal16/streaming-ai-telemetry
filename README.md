@@ -184,10 +184,10 @@ By completing this project, I aim to gain hands-on experience with:
 - [x] Unit tests for domain model
 
 ### Milestone 2 – Synthetic Telemetry Generator
-- [ ] Realistic inference event generator
-- [ ] Configurable workload generation
-- [ ] Failure simulation
-- [ ] Event validation tests
+- [x] Realistic inference event generator
+- [x] Configurable workload generation
+- [x] Failure simulation
+- [x] Event validation tests
 
 ### Milestone 3 – Kafka Integration
 - [ ] Docker Compose infrastructure
@@ -261,3 +261,51 @@ Implemented unit tests covering:
 - Invalid enum handling
 
 All tests passing.
+
+### Milestone 2 - Synthetic Telemetry Generator
+
+Completed
+
+Implemented a configurable synthetic telemetry generator capable of producing realistic AI inference events for downstream streaming and analytics.
+
+### Architecture
+
+```text
+                    Simulation Profile
+                           │
+                           ▼
+             SyntheticTelemetryGenerator
+                           │
+                           ▼
+             InferenceTelemetryEvent
+                           │
+                           ▼
+               TelemetrySerializer
+                           │
+                           ▼
+                     JSON (bytes)
+                           │
+                           ▼
+                 Console Output (Now)
+                      Kafka (Next)
+```
+
+### Features
+
+- Added a static provider catalog containing supported AI providers and models.
+- Introduced configurable simulation profiles to model different workload scenarios.
+- Implemented a synthetic telemetry generator that produces internally consistent inference events.
+- Generated realistic request metadata including request IDs, tenant IDs, session IDs, provider, model, and region.
+- Modeled prompt and completion token relationships for realistic token usage.
+- Simulated RAG metrics including retrieved chunks, reranked chunks, cache hits, and tool calls.
+- Generated correlated performance metrics including retrieval, rerank, LLM, and total latency.
+- Simulated request outcomes with configurable failure rates and realistic error generation.
+- Added unit tests covering generator invariants and event validity.
+
+### Key Design Decisions
+
+- Separated static provider metadata from workload behavior.
+- Profiles define workload characteristics while the generator is responsible for producing events.
+- Derived metrics are computed from independent variables to maintain realistic relationships between telemetry fields.
+- Profile validation is performed during object creation to prevent invalid configurations.
+- Serialization remains independent of event generation, enabling future integration with Kafka and other downstream systems.

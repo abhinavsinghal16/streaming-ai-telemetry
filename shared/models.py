@@ -16,6 +16,7 @@ class RequestMetadata:
     model: str
     tenant_id: str
     session_id: str
+    region: str
 
 
 @dataclass(frozen=True)

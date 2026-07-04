@@ -28,6 +28,7 @@ def create_test_event() -> InferenceTelemetryEvent:
             model="gpt-4o",
             tenant_id="acme-corp",
             session_id="session-123",
+            region="us-east-1",
         ),
         performance=PerformanceMetrics(
             retrieval_latency_ms=20,

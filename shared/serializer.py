@@ -48,6 +48,7 @@ class TelemetrySerializer:
             model=request_dict["model"],
             tenant_id=request_dict["tenant_id"],
             session_id=request_dict["session_id"],
+            region=request_dict["region"],
         )
 
         performance = PerformanceMetrics(

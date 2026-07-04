@@ -7,7 +7,6 @@ class RequestStatus(Enum):
 
 
 class ErrorCode(Enum):
-    NONE = "NONE"
     TIMEOUT = "TIMEOUT"
     MODEL_ERROR = "MODEL_ERROR"
     RETRIEVAL_ERROR = "RETRIEVAL_ERROR"
