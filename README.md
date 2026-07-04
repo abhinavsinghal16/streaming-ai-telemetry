@@ -179,9 +179,9 @@ By completing this project, I aim to gain hands-on experience with:
 - [x] High-level architecture finalized
 - [x] Technology stack selected
 - [x] Domain model designed
-- [ ] Domain model implemented
-- [ ] Serialization layer
-- [ ] Unit tests for domain model
+- [x] Domain model implemented
+- [x] Serialization layer
+- [x] Unit tests for domain model
 
 ### Milestone 2 – Synthetic Telemetry Generator
 - [ ] Realistic inference event generator
@@ -228,3 +228,36 @@ By completing this project, I aim to gain hands-on experience with:
 - [ ] End-to-end tests
 - [ ] Dockerized deployment
 - [ ] Documentation
+
+## Milestone 1
+
+Completed
+
+### Objectives
+- Design a stable domain model for AI inference telemetry.
+- Implement a transport-independent serialization layer.
+- Establish a foundation that can be reused by Kafka producers, Flink consumers, and Spark batch jobs.
+
+### Key Design Decisions
+
+- Used immutable (`frozen=True`) dataclasses to represent telemetry events.
+- Modeled the domain using composition rather than inheritance.
+- Kept the serializer independent of Kafka and other transports.
+- Exposed a minimal public API:
+  - `serialize(event) -> bytes`
+  - `deserialize(bytes) -> InferenceTelemetryEvent`
+- Used JSON as the wire format for simplicity and interview readability.
+- Used UTF-8 encoding for portability and interoperability.
+- Used `dataclasses.asdict()` internally while keeping dictionaries hidden from the public API.
+- Explicitly reconstructed domain objects during deserialization instead of using reflection to improve readability and maintainability.
+- Chose fail-fast deserialization for malformed JSON and invalid enum values.
+
+### Testing
+
+Implemented unit tests covering:
+- Round-trip serialization/deserialization
+- Byte serialization
+- Invalid JSON handling
+- Invalid enum handling
+
+All tests passing.
