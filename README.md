@@ -95,7 +95,7 @@ streaming-ai-telemetry/
 ├── docs/
 ├── flink/
 ├── generator/
-├── kafka/
+├── kafka_client/
 ├── shared/
 ├── spark/
 ├── storage/
@@ -109,38 +109,70 @@ streaming-ai-telemetry/
 
 ## Development Roadmap
 
-### Milestone 1
+### Milestone 1 – Project Foundation
 
-* Project foundation
-* Event schema
-* Docker environment
-* Repository structure
+* Domain model design
+* Serialization framework
+* Event schema implementation
+* Unit testing
+* Project structure and architecture
 
-### Milestone 2
+### Milestone 2 – Synthetic Telemetry Generator
 
-* AI telemetry generator
-* Kafka producer
-* Event ingestion
+* Realistic AI inference event generation
+* Provider and model catalog
+* Configurable workload profiles
+* Failure simulation
+* Telemetry validation
 
-### Milestone 3
+### Milestone 3 – Kafka Integration
 
-* Apache Flink
-* Real-time aggregations
-* Windowed analytics
-* Streaming metrics
+* Docker Compose infrastructure
+* Kafka topic creation
+* Producer implementation
+* Consumer implementation
+* Consumer groups and offset management
+* End-to-end event transport validation
 
-### Milestone 4
+### Milestone 4 – Apache Flink (Streaming)
 
-* Apache Spark
-* Historical analytics
-* Batch reporting
+* Kafka stream ingestion
+* Event deserialization
+* Windowed aggregations
+* Real-time metrics
+* Alert generation
+* Streaming analytics
 
-### Milestone 5
+### Milestone 5 – Storage
 
-* Dashboard
-* Testing
+* Persist processed telemetry events
+* JSON and Parquet output
+* Historical dataset generation
+* Storage architecture
+
+### Milestone 6 – Apache Spark (Batch Analytics)
+
+* Historical data ingestion
+* Batch analytics
+* Trend analysis
+* Reporting and insights
+* Spark-based data processing
+
+### Milestone 7 – Dashboard & Observability
+
+* Live metrics visualization
+* Historical reporting
+* Operational dashboards
+* Observability tooling
+
+### Milestone 8 – Testing & Production Readiness
+
+* Unit tests
+* Integration tests
+* End-to-end tests
+* Dockerized deployment
 * Documentation
-* Performance improvements
+* Performance validation
 
 ---
 
@@ -190,11 +222,12 @@ By completing this project, I aim to gain hands-on experience with:
 - [x] Event validation tests
 
 ### Milestone 3 – Kafka Integration
-- [ ] Docker Compose infrastructure
-- [ ] Kafka broker
-- [ ] Topic creation
-- [ ] Producer implementation
-- [ ] Consumer implementation
+- [x] Docker Compose infrastructure
+- [x] Kafka broker
+- [x] Topic creation
+- [x] Producer implementation
+- [x] Consumer implementation
+- [x] End-to-end producer/consumer validation
 - [ ] Integration tests
 
 ### Milestone 4 – Apache Flink (Streaming)
@@ -245,7 +278,6 @@ Completed
 - Kept the serializer independent of Kafka and other transports.
 - Exposed a minimal public API:
   - `serialize(event) -> bytes`
-  - `deserialize(bytes) -> InferenceTelemetryEvent`
 - Used JSON as the wire format for simplicity and interview readability.
 - Used UTF-8 encoding for portability and interoperability.
 - Used `dataclasses.asdict()` internally while keeping dictionaries hidden from the public API.
@@ -284,10 +316,7 @@ Implemented a configurable synthetic telemetry generator capable of producing re
                            │
                            ▼
                      JSON (bytes)
-                           │
-                           ▼
-                 Console Output (Now)
-                      Kafka (Next)
+
 ```
 
 ### Features
@@ -309,3 +338,61 @@ Implemented a configurable synthetic telemetry generator capable of producing re
 - Derived metrics are computed from independent variables to maintain realistic relationships between telemetry fields.
 - Profile validation is performed during object creation to prevent invalid configurations.
 - Serialization remains independent of event generation, enabling future integration with Kafka and other downstream systems.
+
+### Milestone 3 – Kafka Integration
+
+Completed
+
+Implemented end-to-end Kafka ingestion and consumption for AI telemetry events.
+
+### Architecture
+
+```text
+            SyntheticTelemetryGenerator
+                        │
+                        ▼
+              InferenceTelemetryEvent
+                        │
+                        ▼
+                TelemetrySerializer
+                        │
+                        ▼
+                 Kafka Producer
+                        │
+                        ▼
+          Topic: llm-inference-events
+                 (3 partitions)
+                        │
+                        ▼
+                 Kafka Consumer
+                        │
+                        ▼
+               Telemetry Validation
+```
+
+### Features
+- Added Docker Compose-based Kafka environment.
+- Created Kafka topic llm-inference-events.
+- Implemented reusable Kafka producer wrapper.
+- Implemented reusable Kafka consumer wrapper.
+- Configured consumer groups and offset management.
+- Validated end-to-end event transport from generator to consumer.
+- Verified partition distribution across a multi-partition topic.
+- Verified serialization integrity by consuming and inspecting JSON payloads.
+
+### Key Design Decisions
+- Kept Kafka-specific code isolated within the kafka_client package.
+- Removed topic ownership from producer configuration to allow a single producer to publish to multiple topics.
+- Configured the topic with three partitions to explore Kafka parallelism and consumer-group behavior.
+- Kept serialization independent of Kafka to preserve transport independence.
+- Used consumer groups to model production-style stream consumption.
+- Used JSON payloads for readability and debugging during development.
+
+### Validation
+- Verified successful transport of approximately 10,000 generated telemetry events through Kafka.
+
+Observed:
+- Balanced partition utilization across all three partitions.
+- Monotonically increasing offsets within each partition.
+- Correct preservation of nested telemetry structures.
+- Correct serialization of enums, timestamps, and domain objects.

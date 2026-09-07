@@ -6,6 +6,12 @@ from generator.synthetic_telemetry_generator import (
 
 from shared.serializer import TelemetrySerializer
 
+from kafka_client.producer import TelemetryProducer
+from kafka_client.producer_config import ProducerConfig
+
+from profiles.normal import NORMAL_PROFILE
+
+from shared.serializer import TelemetrySerializer
 
 def main():
 
@@ -16,14 +22,22 @@ def main():
     serializer = TelemetrySerializer()
     event_count = NORMAL_PROFILE.event_count
 
+    config = ProducerConfig(
+        bootstrap_servers="localhost:9092",
+        client_id="telemetry-generator",
+    )
+
+    producer = TelemetryProducer(config)
+    
     for _ in range(NORMAL_PROFILE.event_count):
 
         event = generator.generate()
 
         serialized = serializer.serialize(event)
 
-        print(serialized.decode())
+        producer.send(serialized)
 
+    producer.close()
 
 if __name__ == "__main__":
     main()
