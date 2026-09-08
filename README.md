@@ -60,7 +60,7 @@ This project demonstrates how such a streaming platform can be designed using Ka
                 ┌─────────────┴─────────────┐
                 ▼                           ▼
          Apache Flink                Event Storage
-     Real-Time Analytics          JSON / Parquet Files
+     Real-Time Analytics             Parquet Files
                 │                           │
                 └─────────────┬─────────────┘
                               ▼
@@ -239,9 +239,9 @@ By completing this project, I aim to gain hands-on experience with:
 - [ ] Streaming tests
 
 ### Milestone 5 – Storage
-- [ ] Persist processed events
-- [ ] Parquet output
-- [ ] Historical dataset generation
+- [x] Persist processed events
+- [x] Parquet output
+- [x] Historical dataset generation
 
 ### Milestone 6 – Apache Spark (Batch)
 - [ ] Historical data ingestion
@@ -396,3 +396,55 @@ Observed:
 - Monotonically increasing offsets within each partition.
 - Correct preservation of nested telemetry structures.
 - Correct serialization of enums, timestamps, and domain objects.
+
+### Milestone 5 – Storage
+
+Completed
+
+Implemented persistent telemetry storage using Apache Parquet.
+
+### Architecture
+
+```text
+Kafka Consumer
+        │
+        ▼
+  Batched Records
+        │
+        ▼
+ Pandas DataFrame
+        │
+        ▼
+ telemetry.parquet
+```
+
+### Features
+- Added Parquet storage layer using Pandas and PyArrow.
+- Implemented batched persistence of Kafka events.
+- Stored telemetry events in Apache Parquet format.
+- Verified successful read/write round-trip using Pandas.
+- Generated a historical dataset containing approximately 10,000 telemetry events.
+
+### Key Design Decisions
+- Chose Parquet as the storage format to support downstream analytics workloads.
+- Preserved the original nested telemetry schema during storage.
+- Kept storage concerns separate from Kafka infrastructure code.
+- Used batched writes to reduce storage overhead.
+
+### Validation
+Verified:
+- Successful creation of storage/telemetry.parquet
+- Verified persistence of 10,000 telemetry events
+- Verified dataset shape: (10,000 rows, 6 columns)
+- 6 top-level columns preserved:
+  - metadata
+  - request
+  - performance
+  - tokens
+  - rag
+  - outcome
+
+Observed:
+- No data loss during persistence
+- Successful recovery of nested telemetry structures
+- Schema consistency between generated events and stored records
