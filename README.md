@@ -50,7 +50,7 @@ This project demonstrates how a modern AI telemetry platform can be built using 
 ## High-Level Architecture
 
 ```text
-                     AI Application (Simulated)
+                                          AI Application (Simulated)
                               │
                               ▼
                      Telemetry Generator
@@ -61,27 +61,34 @@ This project demonstrates how a modern AI telemetry platform can be built using 
                     ┌─────────┴─────────┐
                     ▼                   ▼
                  Flink          Local Parquet Storage
-            Stream Processing
+            Stream Processing            │
+                    │                    ▼
+                    │              Amazon S3
                     │
                     ▼
-                 Amazon S3
-                    │
-                    ▼
-              Amazon Athena
-                    │
-                    ▼
-                 Grafana
+             Real-Time Metrics
 
 Historical Analytics Branch
 ───────────────────────────
 
-Local Parquet Storage
-          │
-          ▼
-        Spark
-          │
-          ▼
+Amazon S3
+    │
+    ▼
+  Spark
+    │
+    ▼
 Historical Analytics
+
+Future Analytics Branch
+───────────────────────
+
+Amazon S3
+    │
+    ▼
+Athena
+    │
+    ▼
+Grafana
 ```
 
 ---
@@ -96,7 +103,7 @@ Historical Analytics
 * Pandas
 * PyArrow
 * Docker Compose
-* Amazon S3
+* Amazon S3 (via MinIO for local development)
 * Amazon Athena
 * Grafana
 
@@ -164,10 +171,12 @@ streaming-ai-telemetry/
 - Reporting
 
 ### Milestone 7 – Amazon S3 Storage
-- Cloud object storage
-- Flink output sink
-- Partitioned datasets
-- Storage validation
+- Deploy MinIO local S3 environment
+- Create telemetry bucket
+- Validate S3 connectivity using boto3
+- Upload telemetry Parquet dataset
+- Download telemetry Parquet dataset
+- Validate object storage workflow
 
 ### Milestone 8 – Athena Analytics
 - External tables
@@ -265,13 +274,12 @@ By completing this project, I aim to gain hands-on experience with:
 - [x] Reporting
 
 ### Milestone 7 – Amazon S3 Storage
-- [ ] Add MinIO local S3 environment
-- [ ] Create telemetry bucket
-- [ ] Validate S3 connectivity
-- [ ] Implement Flink output sink
-- [ ] Persist telemetry data to S3
-- [ ] Partition telemetry data by date
-- [ ] Validate end-to-end Kafka → Flink → S3 flow
+- [x] Add MinIO local S3 environment
+- [x] Create telemetry bucket
+- [x] Validate S3 connectivity
+- [x] Upload telemetry Parquet dataset
+- [x] Download telemetry Parquet dataset
+- [x] Validate object storage workflow
 
 ### Milestone 8 – Athena Analytics
 - [ ] Create Athena database

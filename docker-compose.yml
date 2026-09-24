@@ -62,5 +62,16 @@ services:
     environment:
       - JOB_MANAGER_RPC_ADDRESS=jobmanager
 
+  minio:
+    image: quay.io/minio/minio:latest
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password123
+    command: server /data --console-address ":9001"
+
 volumes:
   kafka-data:
