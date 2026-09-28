@@ -47,48 +47,45 @@ This project demonstrates how a modern AI telemetry platform can be built using 
 
 ---
 
+## System Capabilities
+
+The platform currently supports:
+
+- Synthetic AI inference telemetry generation
+- Kafka-based event streaming
+- Real-time stream processing with Flink
+- Historical analytics with Spark
+- Parquet-based telemetry storage
+- Object storage using Amazon S3
+- Serverless analytics using Athena
+- Operational dashboards using Grafana
+
+The platform processes approximately 10,000 AI inference telemetry events end-to-end across the streaming and analytics pipeline.
+
+---
+
 ## High-Level Architecture
 
 ```text
-                                          AI Application (Simulated)
-                              │
-                              ▼
-                     Telemetry Generator
-                              │
-                              ▼
-                           Kafka
-                              │
-                    ┌─────────┴─────────┐
-                    ▼                   ▼
-                 Flink          Local Parquet Storage
-            Stream Processing            │
-                    │                    ▼
-                    │              Amazon S3
-                    │
-                    ▼
-             Real-Time Metrics
-
-Historical Analytics Branch
-───────────────────────────
-
-Amazon S3
-    │
-    ▼
-  Spark
-    │
-    ▼
-Historical Analytics
-
-Future Analytics Branch
-───────────────────────
-
-Amazon S3
-    │
-    ▼
-Athena
-    │
-    ▼
-Grafana
+Telemetry Generator
+        │
+        ▼
+      Kafka
+        │
+        ▼
+      Flink
+        │
+        ▼
+  Parquet Dataset
+   ┌────┴────┐
+   ▼         ▼
+ Spark      Amazon S3
+   │           │
+   ▼           ▼
+Batch      Athena
+Analytics     │
+              ▼
+           Grafana
 ```
 
 ---
@@ -282,24 +279,24 @@ By completing this project, I aim to gain hands-on experience with:
 - [x] Validate object storage workflow
 
 ### Milestone 8 – Athena Analytics
-- [ ] Create Athena database
-- [ ] Register telemetry dataset
-- [ ] Create external tables
-- [ ] Query telemetry data from S3
-- [ ] Provider-level analytics
-- [ ] Model latency analytics
-- [ ] Token usage analytics
-- [ ] Validate analytics results
+- [x] Create Athena database
+- [x] Register telemetry dataset
+- [x] Create external tables
+- [x] Query telemetry data from S3
+- [x] Provider-level analytics
+- [x] Model latency analytics
+- [x] Token usage analytics
+- [x] Validate analytics results
 
 ### Milestone 9 – Grafana Dashboard & Observability
-- [ ] Deploy Grafana
-- [ ] Connect Grafana to Athena
-- [ ] Create latency dashboard
-- [ ] Create throughput dashboard
-- [ ] Create error-rate dashboard
-- [ ] Create model utilization dashboard
-- [ ] Create token consumption dashboard
-- [ ] Validate end-to-end observability workflow
+- [x] Deploy Grafana
+- [x] Connect Grafana to Athena
+- [x] Create latency dashboard
+- [x] Create throughput dashboard
+- [x] Create error-rate dashboard
+- [x] Create model utilization dashboard
+- [x] Create token consumption dashboard
+- [x] Validate end-to-end observability workflow
 
 ### Milestone 10 – Kubernetes Deployment
 - [ ] Create Kubernetes manifests
@@ -620,3 +617,79 @@ Observed:
 - Nested fields were directly queryable without schema flattening.
 - Schema consistency was maintained between storage and analytics layers.
 - Historical datasets remained analytics-ready after persistence.
+
+### Milestone 8 – Athena Analytics
+### Sample Athena Queries
+
+#### Provider Utilization
+
+```sql
+SELECT provider, COUNT(*)
+FROM telemetry_flat
+GROUP BY provider;
+```
+
+#### Model Latency
+
+```sql
+SELECT model_name,
+       AVG(latency_ms)
+FROM telemetry_flat
+GROUP BY model_name;
+```
+
+#### Token Consumption
+
+```sql
+SELECT model_name,
+       SUM(total_tokens)
+FROM telemetry_flat
+GROUP BY model_name;
+```
+
+
+### Milestone 9 - Grafana Dashboard & Observability
+## Grafana Dashboard
+
+The dashboard provides visibility into:
+
+- Request throughput
+- Error rates
+- Model utilization
+- Token consumption
+- Provider distribution
+
+![Grafana Dashboard](docs/images/grafana-dashboard_1.png)
+
+The dashboard is backed by Athena queries over telemetry data stored in Amazon S3 and provides operational visibility into approximately 10,000 AI inference events.
+
+### End-to-End Validation
+
+Validated the complete observability pipeline:
+
+Telemetry Generator
+→ Parquet Storage
+→ Amazon S3
+→ Athena
+→ Grafana
+
+Generated new telemetry events, uploaded the updated dataset to S3, verified Athena query results, and confirmed dashboard updates in Grafana.
+
+## Key Concepts Practiced
+
+- Event-driven architectures
+- Kafka partitioning and consumer groups
+- Stateful stream processing with Flink
+- Batch analytics with Spark
+- Columnar storage using Parquet
+- Cloud object storage patterns
+- Athena-based serverless analytics
+- Operational observability and dashboards
+
+Future Enhancements
+-------------------
+- Kubernetes deployment
+- Helm charts
+- AWS Glue integration
+- Iceberg tables
+- Real-time alerting

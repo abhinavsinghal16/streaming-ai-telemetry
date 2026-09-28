@@ -73,5 +73,16 @@ services:
       MINIO_ROOT_PASSWORD: password123
     command: server /data --console-address ":9001"
 
+  grafana:
+    image: grafana/grafana:13.2.2
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_FEATURE_TOGGLES_ENABLE=datasourceLegacyIdApi
+    restart: unless-stopped
+
 volumes:
   kafka-data:
